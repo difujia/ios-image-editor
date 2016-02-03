@@ -187,7 +187,8 @@ static const NSTimeInterval kAnimationIntervalTransform = 0.2;
     if(self.checkBounds) {
         self.minimumScale = 1;
     }
-    self.initialImageFrame = CGRectMake(CGRectGetMidX(self.cropRect) - w/2, CGRectGetMidY(self.cropRect) - h/2,w,h);
+    CGRect imageRect = CGRectMake(CGRectGetMidX(self.cropRect) - w/2, CGRectGetMidY(self.cropRect) - h/2,w,h);
+    self.initialImageFrame = [self.view convertRect:imageRect fromView:self.frameView];
     self.validTransform = CGAffineTransformMakeScale(self.scale, self.scale);
     
     void (^doReset)(void) = ^{
