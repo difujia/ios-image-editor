@@ -36,6 +36,8 @@ static const NSTimeInterval kAnimationIntervalTransform = 0.2;
 @property(nonatomic, assign) CGRect initialImageFrame;
 @property(nonatomic, assign) CGAffineTransform validTransform;
 
+@property(nonatomic, assign) BOOL viewIsDisappearing;
+
 @end
 
 
@@ -257,7 +259,6 @@ static const NSTimeInterval kAnimationIntervalTransform = 0.2;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self reset:NO];
     self.imageView.image = self.previewImage;
     
     if(self.previewImage != self.sourceImage) {
@@ -280,10 +281,25 @@ static const NSTimeInterval kAnimationIntervalTransform = 0.2;
     }
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    self.viewIsDisappearing = YES;
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    self.viewIsDisappearing = NO;
+}
+
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    [self reset:NO];
+
+    if (!self.viewIsDisappearing) {
+        [self reset:NO];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
