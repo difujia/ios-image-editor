@@ -189,9 +189,22 @@ static const NSTimeInterval kAnimationIntervalTransform = 0.2;
     if(self.checkBounds) {
         self.minimumScale = 1;
     }
+
     CGRect imageRect = CGRectMake(CGRectGetMidX(self.cropRect) - w/2, CGRectGetMidY(self.cropRect) - h/2,w,h);
-    self.initialImageFrame = [self.view convertRect:imageRect fromView:self.frameView];
-    self.validTransform = CGAffineTransformMakeScale(self.scale, self.scale);
+    CGRect identityframe = [self.view convertRect:imageRect fromView:self.frameView];
+    CGRect targetFrame = [self.view convertRect:self.frameView.bounds fromView:self.frameView];
+
+    CGFloat translateX = CGRectGetMidX(targetFrame) - CGRectGetMidX(identityframe);
+    CGFloat translateY = CGRectGetMidY(targetFrame) - CGRectGetMidY(identityframe);
+    CGAffineTransform translate = CGAffineTransformMakeTranslation(translateX, translateY);
+
+    CGFloat scaleX = targetFrame.size.width / identityframe.size.width;
+    CGFloat scaleY = targetFrame.size.height / identityframe.size.height;
+    CGFloat scaleToFill = MAX(scaleX, scaleY);
+    CGAffineTransform scale = CGAffineTransformMakeScale(scaleToFill, scaleToFill);
+
+    self.initialImageFrame = identityframe;
+    self.validTransform = CGAffineTransformConcat(translate, scale);
     
     void (^doReset)(void) = ^{
         self.imageView.transform = CGAffineTransformIdentity;
